@@ -1,3 +1,5 @@
+package sortingvisualizer;
+
 public enum Algorithm {
     BUBBLE_SORT("Bubble Sort"),
     SELECTION_SORT("Selection Sort"),
@@ -5,7 +7,8 @@ public enum Algorithm {
     MERGE_SORT("Merge Sort"),
     QUICK_SORT("Quick Sort"),
     COUNTING_SORT("Counting Sort"),
-    RADIX_SORT("Radix Sort");
+    RADIX_SORT("Radix Sort"),
+    HEAP_SORT("Heap Sort");
 
     private final String displayName;
 

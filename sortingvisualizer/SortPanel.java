@@ -1,6 +1,9 @@
+package sortingvisualizer;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
+import sortingvisualizer.SortStep.StepType;
 
 public class SortPanel extends JPanel {
     private static final long serialVersionUID = 1L;
@@ -18,16 +21,15 @@ public class SortPanel extends JPanel {
 
     private boolean[] isSorted;
 
-    private static final Color BAR_COLOR = new Color(52, 152, 219);         // Blue
-    private static final Color COMPARE_COLOR = new Color(241, 196, 15);     // Yellow
-    private static final Color SWAP_COLOR = new Color(231, 76, 60);        // Red
-    private static final Color SORTED_COLOR = new Color(46, 204, 113);     // Green
-    private static final Color PIVOT_COLOR = new Color(155, 89, 182);      // Purple
-    private static final Color SUB_ARRAY_COLOR = new Color(26, 188, 156);  // Turquoise
-
+    private static final Color BAR_COLOR = new Color(70, 130, 180); // Steel Blue
+    private static final Color COMPARE_COLOR = new Color(255, 215, 0); // Gold
+    private static final Color SWAP_COLOR = new Color(255, 69, 0); // Orange Red
+    private static final Color SORTED_COLOR = new Color(50, 205, 50); // Lime Green
+    private static final Color PIVOT_COLOR = new Color(186, 85, 211); // Medium Orchid
+    private static final Color SUB_ARRAY_COLOR = new Color(0, 255, 255); // Cyan
 
     public SortPanel() {
-        setBackground(Color.DARK_GRAY);
+        setBackground(new Color(30, 30, 30)); // Dark Gray
         setPreferredSize(new Dimension(800, 400));
     }
 
@@ -88,7 +90,8 @@ public class SortPanel extends JPanel {
     public void markRangeAsSorted(int start, int end) {
         if (isSorted != null) {
             for (int i = start; i <= end && i < isSorted.length; i++) {
-                if (i >= 0) isSorted[i] = true;
+                if (i >= 0)
+                    isSorted[i] = true;
             }
         }
         // repaint(); // Let the caller decide when to repaint
@@ -101,13 +104,12 @@ public class SortPanel extends JPanel {
         repaint();
     }
 
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (array == null || array.length == 0) {
             g.setColor(Color.WHITE);
-            g.drawString("Array is empty or not initialized.", getWidth()/2 - 100, getHeight()/2);
+            g.drawString("Array is empty or not initialized.", getWidth() / 2 - 100, getHeight() / 2);
             return;
         }
 
@@ -118,10 +120,12 @@ public class SortPanel extends JPanel {
         int panelHeight = getHeight();
         barWidth = Math.max(1, panelWidth / array.length);
         int maxVal = 0;
-        for(int val : array) {
-            if (val > maxVal) maxVal = val;
+        for (int val : array) {
+            if (val > maxVal)
+                maxVal = val;
         }
-        if (maxVal == 0) maxVal = 1; // Avoid division by zero for all zero array
+        if (maxVal == 0)
+            maxVal = 1; // Avoid division by zero for all zero array
 
         for (int i = 0; i < array.length; i++) {
             int barHeight = (int) (((double) array[i] / maxVal) * (panelHeight * 0.9));
@@ -137,9 +141,8 @@ public class SortPanel extends JPanel {
             } else if (i == currentIndex || i == comparingIndex) {
                 g2d.setColor(COMPARE_COLOR);
             } else if (subArrayStart != -1 && i >= subArrayStart && i <= subArrayEnd) {
-                 g2d.setColor(SUB_ARRAY_COLOR);
-            }
-            else {
+                g2d.setColor(SUB_ARRAY_COLOR);
+            } else {
                 g2d.setColor(BAR_COLOR);
             }
             g2d.fillRect(x, y, Math.max(1, barWidth - 1), barHeight);
@@ -150,10 +153,38 @@ public class SortPanel extends JPanel {
                 FontMetrics fm = g2d.getFontMetrics();
                 int stringX = x + (barWidth - 1 - fm.stringWidth(valStr)) / 2;
                 int stringY = y + fm.getAscent() + 2; // +2 for slight top margin
-                if (barHeight > fm.getHeight()){
+                if (barHeight > fm.getHeight()) {
                     g2d.drawString(valStr, stringX, stringY);
                 }
             }
+        }
+    }
+
+    public void processStep(SortStep step) {
+        switch (step.getType()) {
+            case COMPARE:
+                highlightCompare(step.getIndex1(), step.getIndex2());
+                break;
+            case SWAP:
+                highlightSwap(step.getIndex1(), step.getIndex2());
+                break;
+            case SET_VALUE:
+                highlightCompare(step.getIndex1(), step.getIndex1());
+                break;
+            case MARK_SORTED:
+                markAsSorted(step.getIndex1());
+                repaint();
+                break;
+            case CLEAR_HIGHLIGHTS:
+                resetHighlights();
+                repaint();
+                break;
+            case PIVOT:
+                highlightPivot(step.getIndex1());
+                break;
+            case SUB_ARRAY:
+                highlightSubArray(step.getIndex1(), step.getIndex2());
+                break;
         }
     }
 }
