@@ -3,7 +3,6 @@ package sortingvisualizer;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
-import sortingvisualizer.SortStep.StepType;
 
 public class SortPanel extends JPanel {
     private static final long serialVersionUID = 1L;
